@@ -20,6 +20,20 @@
           <group>
             <field name="name" />
           </group>
+          <div class="oe_button_box" name="button_box">
+            <button
+              name="%(estate_property_offer_action)d"
+              type="action"
+              class="oe_stat_button"
+              icon="fa-money"
+            >
+              <field
+                name="offer_count"
+                widget="statinfo"
+                string="Offers"
+              />
+            </button>
+          </div>
           <field name="property_ids">
             <list>
               <field name="name" />
