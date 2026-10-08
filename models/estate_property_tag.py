@@ -15,5 +15,7 @@ class EstatePropertyTag(models.Model):
         "The tag name must be unique.",
     )
     
+    _order = "name"
+    
     name = fields.Char('Tag', required=True)
     

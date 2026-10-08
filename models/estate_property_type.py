@@ -15,6 +15,8 @@ class EstatePropertyType(models.Model):
         "The property type name must be unique.",
     )
 
+    _order = "name"
+    
     
     name = fields.Char('Type', required=True)
     

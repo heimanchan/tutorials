@@ -17,6 +17,8 @@ class EstatePropertyOffer(models.Model):
         "The offer price must be strictly positive.",
     )
     
+    _order = "price desc"
+    
     price = fields.Float()
     status = fields.Selection(selection=[
                 ('accepted', 'Accepted'),
