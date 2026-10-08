@@ -1,23 +1,33 @@
 from odoo import api, fields, models
 from datetime import timedelta
-from odoo.exceptions import UserError
+from odoo.exceptions import UserError, ValidationError
+from odoo.tools.float_utils import float_compare, float_is_zero
 
 
 class EstateProperty(models.Model):
     _name = "estate.property"
     _description = "Real estate properties"
-    _sql_constraints = [
-        (
-            "check_expected_price",
-            "CHECK(expected_price > 0)",
-            "The expected price must be strictly positive.",
-        ),
-        (
-            "check_selling_price",
-            "CHECK(selling_price > 0)",
-            "The selling price must be positive.",
-        ),
-    ]
+    # _sql_constraints = [
+    #     (
+    #         "check_expected_price",
+    #         "CHECK(expected_price > 0)",
+    #         "The expected price must be strictly positive.",
+    #     ),
+    #     (
+    #         "check_selling_price",
+    #         "CHECK(selling_price > 0)",
+    #         "The selling price must be positive.",
+    #     ),
+    # ]
+    _check_expected_price = models.Constraint(
+        "CHECK(expected_price > 0)",
+        "The expected price must be strictly positive.",
+    )
+
+    _check_selling_price = models.Constraint(
+        "CHECK(selling_price > 0)",
+        "The selling price must be positive.",
+    )
 
     name = fields.Char('Title', required=True)
     description = fields.Text('Description')
@@ -86,3 +96,20 @@ class EstateProperty(models.Model):
             if record.state == "cancelled":
                 raise UserError("A cancelled property cannot be sold.")
             record.state = "sold"
+            
+    @api.constrains("selling_price", "expected_price")
+    def _check_selling_price(self):
+        for record in self:
+            if float_is_zero(record.selling_price, precision_digits=2):
+                continue
+
+            min_price = record.expected_price * 0.90
+
+            if float_compare(
+                record.selling_price,
+                min_price,
+                precision_digits=2,
+            ) < 0:
+                raise ValidationError(
+                    "The selling price cannot be lower than 90% of the expected price."
+                )
