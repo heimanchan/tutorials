@@ -52,6 +52,15 @@
     <field name="model">estate.property</field>
     <field name="arch" type="xml">
       <form string="Properties">
+        <header>
+          <button name="action_sold" type="object" string="Sold" class="oe_highlight"
+            invisible="state in ('sold', 'cancelled')" />
+          <button name="action_cancel" type="object" string="Cancel"
+            invisible="state in ('sold', 'cancelled')" />
+          <field name="state" widget="statusbar"
+            statusbar_visible="new,offer_received,offer_accepted,sold,cancelled" />
+        </header>
+
         <sheet>
           <group>
             <h1>
@@ -97,6 +106,20 @@
                   <field name="price" />
                   <field name="partner_id" />
                   <field name="status" />
+                  <button
+                    name="action_accept"
+                    type="object"
+                    icon="fa-check"
+                    title="Accept"
+                    invisible="status"
+                  />
+                  <button
+                    name="action_refuse"
+                    type="object"
+                    icon="fa-times"
+                    title="Refuse"
+                    invisible="status"
+                  />
                 </list>
               </field>
             </page>
